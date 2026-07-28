@@ -1,10 +1,10 @@
 cmake_minimum_required(4.4.0)
 
-project(GuitarPedal)
+project(project)
 
-add_executable(evergreen)
+add_executable(GuitarPedal)
 
-target_sources(GuitarPedal
+target_sources(project
     private
         main.cxx)
 }
