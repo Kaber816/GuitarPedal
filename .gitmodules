@@ -4,3 +4,6 @@
 [submodule "DaisySP"]
 	path = DaisySP
 	url = git@github.com:electro-smith/DaisySP.git
+[submodule "Terrarium"]
+	path = Terrarium
+	url = git@github.com:PedalPCB/Terrarium.git
