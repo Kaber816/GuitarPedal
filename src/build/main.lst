@@ -1,0 +1,97 @@
+ARM GAS  /tmp/ccNlhOV9.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"main.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.file 1 "main.cpp"
+  19              		.section	.text.startup.main,"ax",%progbits
+  20              		.align	1
+  21              		.p2align 2,,3
+  22              		.global	main
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	main:
+  28              	.LFB2884:
+   1:main.cpp      **** #include "daisy.h"
+   2:main.cpp      **** 
+   3:main.cpp      **** int main()
+   4:main.cpp      **** {
+  29              		.loc 1 4 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+   5:main.cpp      **** 
+   6:main.cpp      **** }
+  34              		.loc 1 6 1 is_stmt 0 view .LVU1
+  35 0000 0020     		movs	r0, #0
+  36 0002 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE2884:
+  40              		.text
+  41              	.Letext0:
+  42              		.file 2 "/usr/arm-none-eabi/include/machine/_default_types.h"
+  43              		.file 3 "/usr/arm-none-eabi/include/sys/_stdint.h"
+  44              		.file 4 "/usr/arm-none-eabi/include/stdint.h"
+  45              		.file 5 "/usr/lib/gcc/arm-none-eabi/16.1.0/include/stddef.h"
+  46              		.file 6 "/usr/arm-none-eabi/include/c++/16.1.0/cmath"
+  47              		.file 7 "/usr/arm-none-eabi/include/c++/16.1.0/bits/std_abs.h"
+  48              		.file 8 "/usr/arm-none-eabi/include/c++/16.1.0/cstdlib"
+  49              		.file 9 "/usr/arm-none-eabi/include/c++/16.1.0/cstdint"
+  50              		.file 10 "/usr/arm-none-eabi/include/c++/16.1.0/type_traits"
+  51              		.file 11 "/usr/arm-none-eabi/include/c++/16.1.0/bits/utility.h"
+  52              		.file 12 "/usr/arm-none-eabi/include/c++/16.1.0/bits/stl_pair.h"
+  53              		.file 13 "/usr/arm-none-eabi/include/c++/16.1.0/debug/debug.h"
+ARM GAS  /tmp/ccNlhOV9.s 			page 2
+
+
+  54              		.file 14 "/usr/arm-none-eabi/include/c++/16.1.0/bits/uses_allocator.h"
+  55              		.file 15 "/usr/arm-none-eabi/include/c++/16.1.0/functional"
+  56              		.file 16 "/usr/arm-none-eabi/include/c++/16.1.0/cstdarg"
+  57              		.file 17 "/usr/arm-none-eabi/include/c++/16.1.0/cstdio"
+  58              		.file 18 "/usr/arm-none-eabi/include/c++/16.1.0/cstring"
+  59              		.file 19 "/usr/arm-none-eabi/include/c++/16.1.0/cstddef"
+  60              		.file 20 "/usr/arm-none-eabi/include/sys/_types.h"
+  61              		.file 21 "/usr/arm-none-eabi/include/sys/reent.h"
+  62              		.file 22 "/usr/arm-none-eabi/include/sys/lock.h"
+  63              		.file 23 "/usr/arm-none-eabi/include/math.h"
+  64              		.file 24 "/usr/arm-none-eabi/include/stdlib.h"
+  65              		.file 25 "/usr/arm-none-eabi/include/c++/16.1.0/math.h"
+  66              		.file 26 "/usr/arm-none-eabi/include/c++/16.1.0/stdlib.h"
+  67              		.file 27 "/usr/arm-none-eabi/include/c++/16.1.0/arm-none-eabi/thumb/v7e-m+dp/hard/bits/c++config.h
+  68              		.file 28 "../libDaisy/src/daisy_core.h"
+  69              		.file 29 "../libDaisy/src/dev/max11300.h"
+  70              		.file 30 "../libDaisy/src/dev/sr_595.h"
+  71              		.file 31 "../libDaisy/src/util/wav_format.h"
+  72              		.file 32 "/usr/arm-none-eabi/include/c++/16.1.0/bits/stl_iterator.h"
+  73              		.file 33 "/usr/lib/gcc/arm-none-eabi/16.1.0/include/stdarg.h"
+  74              		.file 34 "/usr/arm-none-eabi/include/stdio.h"
+  75              		.file 35 "/usr/arm-none-eabi/include/string.h"
+  76              		.file 36 "../libDaisy/Middlewares/Third_Party/FatFs/src/integer.h"
+  77              		.file 37 "../libDaisy/Middlewares/Third_Party/FatFs/src/ff.h"
+  78              		.file 38 "<built-in>"
+ARM GAS  /tmp/ccNlhOV9.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.cpp
+     /tmp/ccNlhOV9.s:20     .text.startup.main:00000000 $t
+     /tmp/ccNlhOV9.s:27     .text.startup.main:00000000 main
+
+NO UNDEFINED SYMBOLS
