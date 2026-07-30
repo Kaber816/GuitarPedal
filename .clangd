@@ -1,0 +1,9 @@
+CompileFlags:
+  Compiler: arm-none-eabi-g++
+  Remove:
+    - -fasm
+    - -finline
+    - -finline-functions-called-once
+    - -fshort-enums
+    - -fno-move-loop-invariants
+    - -Wa,*
