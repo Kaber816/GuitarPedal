@@ -1,5 +1,5 @@
 # Project Name
-TARGET = GuitarPedal 
+TARGET = GuitarPedal
 
 # Sources: main.cpp plus everything in hardware/, effect/, utils/
 CPP_SOURCES = main.cpp \
