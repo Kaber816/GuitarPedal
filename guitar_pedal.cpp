@@ -39,7 +39,7 @@ void GuitarPedal::SetHidUpdateRates()
 {
     for(int i = 0; i < KNOB_6; i++)
     {
-        knobs[i].SetSampleRate(AudioCallbackRate());
+        knobs[i]->SetSampleRate(AudioCallbackRate());
     }
 }
 

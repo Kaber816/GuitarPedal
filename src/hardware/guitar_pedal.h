@@ -9,11 +9,10 @@
 
 namespace daisy
 {
-/**Helpers and hardware definitions for the GuitarPedal.*/
 class GuitarPedal
 {
     public:
-        /** Knobs */
+        /** Knobs enums */
         enum Knob 
         {
             KNOB_1, /** Top left pot */
@@ -25,7 +24,7 @@ class GuitarPedal
             KNOB_COUNT, /** Struct end */
         };
 
-        /** Switches */
+        /** Switches enums */
         enum Switches
         {
             SW_1, /** Leftmost switch */
@@ -35,7 +34,7 @@ class GuitarPedal
             SW_COUNT, /** Struct end */
         };
 
-        /** Switches */
+        /** LED enums */
         enum LED {
             LED_L, /** Left LED */
             LED_R, /** Right LED */
