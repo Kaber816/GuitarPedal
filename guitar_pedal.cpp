@@ -2,6 +2,22 @@
 
 using namespace daisy;
 
+// Pins
+constexpr Pin SW_1_PIN = seed::D10;
+constexpr Pin SW_2_PIN = seed::D9;
+constexpr Pin SW_3_PIN = seed::D8;
+constexpr Pin SW_4_PIN = seed::D7;
+
+constexpr Pin KNOB_1_PIN = seed::A1;
+constexpr Pin KNOB_2_PIN = seed::A2;
+constexpr Pin KNOB_3_PIN = seed::A3;
+constexpr Pin KNOB_4_PIN = seed::A4;
+constexpr Pin KNOB_5_PIN = seed::A5;
+constexpr Pin KNOB_6_PIN = seed::A6;
+
+constexpr Pin LED_L_PIN = seed::D29;
+constexpr Pin LED_R_PIN = seed::D30;
+
 void GuitarPedal::Init(bool boost)
 {
     // Set Some numbers up for accessors.
@@ -81,86 +97,60 @@ void GuitarPedal::StopAdc()
 
 void GuitarPedal::ProcessAnalogControls()
 {
-    knob1.Process();
+    knobs[0].Process();
+    knobs[1].Process();
+    knobs[2].Process();
+    knobs[3].Process();
+    knobs[4].Process();
+    knobs[5].Process();
+}
+
+void ProcessDigitalControls()
+{
+    
 }
 
 float GuitarPedal::GetKnobValue(Knob k)
 {
     size_t idx;
-    idx = k < KNOB_LAST ? k : KNOB_1;
-    return knobs[idx]->Value();
+    idx = k < KNOB_6 ? k : KNOB_1;
+    return knobs[idx].Value();
 }
 
-void GuitarPedal::ProcessDigitalControls()
-{
-    switch1.Debounce();
-}
 
-void GuitarPedal::ClearLeds()
-{
-    // Using Color
-    Color c;
-    c.Init(Color::PresetColor::OFF);
-    led1.SetColor(c);
-    led2.SetColor(c);
-    // Without
-    // led1.Set(0.0f, 0.0f, 0.0f);
-    // led2.Set(0.0f, 0.0f, 0.0f);
-}
-
-void GuitarPedal::UpdateLeds()
-{
-    led1.Update();
-    led2.Update();
-}
-
-void GuitarPedal::InitButtons()
-{
-    // button1
-    button1.Init(SW_1_PIN);
-    // button2
-    button2.Init(SW_2_PIN);
-
-    buttons[BUTTON_1] = &button1;
-    buttons[BUTTON_2] = &button2;
-}
-
-void GuitarPedal::InitEncoder()
-{
-    encoder.Init(ENC_A_PIN, ENC_B_PIN, ENC_CLICK_PIN);
-}
-
-void GuitarPedal::InitLeds()
-{
-    // LEDs are just going to be on/off for now.
-    // TODO: Add PWM support
-    led1.Init(LED_1_R_PIN, LED_1_G_PIN, LED_1_B_PIN, true);
-
-    led2.Init(LED_2_R_PIN, LED_2_G_PIN, LED_2_B_PIN, true);
-
-    ClearLeds();
-    UpdateLeds();
-}
 void GuitarPedal::InitKnobs()
 {
-    // Configure the ADC channels using the desired pin
-    AdcChannelConfig knob_init[KNOB_LAST];
+    // Configure ADC channels for potentiometer pins
+    AdcChannelConfig knob_init[KNOB_COUNT]; // ADC configuration object
     knob_init[KNOB_1].InitSingle(KNOB_1_PIN);
     knob_init[KNOB_2].InitSingle(KNOB_2_PIN);
-    // Initialize with the knob init struct w/ 2 members
-    // Set Oversampling to 32x
-    seed.adc.Init(knob_init, KNOB_LAST);
-    // Make an array of pointers to the knobs.
+    knob_init[KNOB_3].InitSingle(KNOB_3_PIN);
+    knob_init[KNOB_4].InitSingle(KNOB_4_PIN);
+    knob_init[KNOB_5].InitSingle(KNOB_5_PIN);
+    knob_init[KNOB_6].InitSingle(KNOB_6_PIN);
+
+    seed.adc.Init(knob_init, KNOB_COUNT);
+
+    // Fill the empty array with references to the knew initialized knobs
     knobs[KNOB_1] = &knob1;
-    knobs[KNOB_2] = &knob2;
-    for(int i = 0; i < KNOB_LAST; i++)
+    knobs[KNOB_1] = &knob2;
+    knobs[KNOB_1] = &knob3;
+    knobs[KNOB_1] = &knob4;
+    knobs[KNOB_1] = &knob5;
+    knobs[KNOB_1] = &knob6;
+
+    for (int i = 0; i < KNOB_COUNT; i++)
     {
         knobs[i]->Init(seed.adc.GetPtr(i), seed.AudioCallbackRate());
     }
 }
-void GuitarPedal::InitMidi()
+
+void GuitarPedal::InitSwitches()
 {
-    MidiUartHandler::Config midi_config;
-    midi.Init(midi_config);
+
 }
 
+void GuitarPedal::InitLeds()
+{
+
+}

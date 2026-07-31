@@ -1,5 +1,10 @@
 #pragma once
 
+#include "ui/UiEventQueue.h"
+#ifndef SAMPLE_RATE
+#define SAMPLE_RATE 48014.f
+#endif
+
 #include "daisy_seed.h"
 
 namespace daisy
@@ -16,16 +21,18 @@ class GuitarPedal
             KNOB_3, /** Top right pot */
             KNOB_4, /** Bottom left pot */
             KNOB_5, /** Bottom middle pot */
-            KNOB_6, /** Bottom righr pot */
+            KNOB_6, /** Bottom right pot */
+            KNOB_COUNT, /** Struct end */
         };
 
         /** Switches */
         enum Switches
         {
-            SWITCH_1, /** Leftmost switch */
-            SWITCH_2, /** Left-center switch */
-            SWITCH_3, /** Right-center switch */
-            SWITCH_4, /** Rightmost switch */
+            SW_1, /** Leftmost switch */
+            SW_2, /** Left-center switch */
+            SW_3, /** Right-center switch */
+            SW_4, /** Rightmost switch */
+            SW_COUNT, /** Struct end */
         };
 
         /** Switches */
@@ -91,6 +98,9 @@ class GuitarPedal
 
         /** Call at the same frequency as controls are read for stable readings.*/
         void ProcessAnalogControls();
+
+        /** Call at the same frequency as controls are read for stable readings.*/
+        void ProcessDigitalControls();
         
         /** Get value per knob.
         \param k Which knob to get
@@ -107,8 +117,8 @@ class GuitarPedal
 
         DaisySeed     seed;    /**< & */
         Encoder       encoder; /**< & */
-        AnalogControl knobs[6]; /**< & */
-        Switch        switches[4] /**< & */;
+        AnalogControl knob1, knob2, knob3, knob4, knob5, knob6, *knobs[KNOB_COUNT]; /**< & */
+        Switch        switch1, switch2, switch3, switch4, *switches[SW_COUNT]; /**< & */
         Led           leds[2]; /**< & */
 
       private:
@@ -119,7 +129,6 @@ class GuitarPedal
 
         inline uint16_t* adc_ptr(const uint8_t chn) { return seed.adc.GetPtr(chn); }
 
-        LedDriverPca9685<2, true> led_driver_;
 };
 
 }
