@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ui/UiEventQueue.h"
 #ifndef SAMPLE_RATE
 #define SAMPLE_RATE 48014.f
 #endif
@@ -100,6 +99,9 @@ class GuitarPedal
 
         /** Call at the same frequency as controls are read for stable readings.*/
         void ProcessDigitalControls();
+
+        /** Update Leds.*/
+        void UpdateLeds();
         
         /** Get value per knob.
         \param k Which knob to get
@@ -118,7 +120,7 @@ class GuitarPedal
         Encoder       encoder; /**< & */
         AnalogControl knob1, knob2, knob3, knob4, knob5, knob6, *knobs[KNOB_COUNT]; /**< & */
         Switch        switch1, switch2, switch3, switch4, *switches[SW_COUNT]; /**< & */
-        Led           leds[2]; /**< & */
+        Led           ledLeft, ledRight, *leds[2]; /**< & */
 
       private:
         void SetHidUpdateRates();
