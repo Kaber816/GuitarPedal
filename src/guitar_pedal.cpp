@@ -3,10 +3,12 @@
 using namespace daisy;
 
 // Pins
-constexpr Pin SW_1_PIN = seed::D10;
-constexpr Pin SW_2_PIN = seed::D9;
-constexpr Pin SW_3_PIN = seed::D8;
-constexpr Pin SW_4_PIN = seed::D7;
+constexpr Pin SW_1_PIN = seed::D10; /* Leftmost switch*/
+constexpr Pin SW_2_PIN = seed::D9; /* Center left switch*/
+constexpr Pin SW_3_PIN = seed::D8; /* Center right switch*/
+constexpr Pin SW_4_PIN = seed::D7; /* Rightmost switch*/
+constexpr Pin SW_5_PIN = seed::D25; /* Rightmost switch*/
+constexpr Pin SW_6_PIN = seed::D26; /* Rightmost switch*/
 
 constexpr Pin KNOB_1_PIN = seed::A1;
 constexpr Pin KNOB_2_PIN = seed::A2;
@@ -154,18 +156,24 @@ void GuitarPedal::InitKnobs()
 
 void GuitarPedal::InitSwitches()
 {
+    // DPDT switches setup
     constexpr Pin pin_numbers[SW_COUNT] =
     {
         SW_1_PIN,
         SW_2_PIN,
         SW_3_PIN,
         SW_4_PIN,
+        SW_5_PIN,
+        SW_6_PIN,
     };
 
     switches[SW_1] = &switch1;
     switches[SW_2] = &switch2;
     switches[SW_3] = &switch3;
     switches[SW_4] = &switch4;
+    switches[SW_5] = &switch5;
+    switches[SW_6] = &switch6;
+
 
     for (size_t i = 0; i < SW_COUNT; i++)
     {
@@ -187,4 +195,8 @@ void GuitarPedal::InitLeds()
         leds[i]->Set(0);
         leds[i]->Update();
     }
+}
+
+void GuitarPedal::SetLed(LED idx, float bright) {
+    leds[idx]->Set(bright);
 }

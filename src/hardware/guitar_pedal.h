@@ -20,7 +20,7 @@ class GuitarPedal
             KNOB_4, /** Bottom left pot */
             KNOB_5, /** Bottom middle pot */
             KNOB_6, /** Bottom right pot */
-            KNOB_COUNT, /** Struct end */
+            KNOB_COUNT, /** Num knobs/truct end */
         };
 
         /** Switches enums */
@@ -30,13 +30,16 @@ class GuitarPedal
             SW_2, /** Left-center switch */
             SW_3, /** Right-center switch */
             SW_4, /** Rightmost switch */
-            SW_COUNT, /** Struct end */
+            SW_5, /** Left footswitch */
+            SW_6, /** Right footswitch */
+            SW_COUNT, /** Num switches/struct end */
         };
-
+        
         /** LED enums */
         enum LED {
             LED_L, /** Left LED */
             LED_R, /** Right LED */
+            LED_COUNT, /** Num LEDs/struct end */
         };
 
         /** Constructor */
@@ -114,12 +117,12 @@ class GuitarPedal
            \param idx Led Index
            \param bright Brightness
          */
-        void SetLed(Led idx, float bright);
+        void SetLed(LED idx, float bright);
 
         DaisySeed     seed;    /**< & */
         Encoder       encoder; /**< & */
         AnalogControl knob1, knob2, knob3, knob4, knob5, knob6, *knobs[KNOB_COUNT]; /**< & */
-        Switch        switch1, switch2, switch3, switch4, *switches[SW_COUNT]; /**< & */
+        Switch        switch1, switch2, switch3, switch4, switch5, switch6, *switches[SW_COUNT]; /**< & */
         Led           ledLeft, ledRight, *leds[2]; /**< & */
 
       private:
