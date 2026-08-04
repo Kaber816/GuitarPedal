@@ -102,9 +102,6 @@ class GuitarPedal
 
         /** Call at the same frequency as controls are read for stable readings.*/
         void ProcessDigitalControls();
-
-        /** Update Leds.*/
-        void UpdateLeds();
         
         /** Get value per knob.
         \param k Which knob to get
@@ -118,6 +115,9 @@ class GuitarPedal
            \param bright Brightness
          */
         void SetLed(LED idx, float bright);
+
+        /** Update Leds.*/
+        void UpdateLeds();
 
         DaisySeed     seed;    /**< & */
         Encoder       encoder; /**< & */
@@ -134,5 +134,4 @@ class GuitarPedal
         inline uint16_t* adc_ptr(const uint8_t chn) { return seed.adc.GetPtr(chn); }
 
 };
-
 }

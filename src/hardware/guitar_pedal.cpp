@@ -30,10 +30,10 @@ void GuitarPedal::Init(bool boost)
     // Initialize the hardware.
     seed.Configure();
     seed.Init(boost);
-    SetAudioBlockSize(48);
     InitLeds();
     InitKnobs();
     InitSwitches();
+    SetAudioBlockSize(48);
 }
 
 void GuitarPedal::DelayMs(size_t del)
@@ -44,7 +44,7 @@ void GuitarPedal::DelayMs(size_t del)
 
 void GuitarPedal::SetHidUpdateRates()
 {
-    for(int i = 0; i < KNOB_COUNT; i++)
+    for(int i = 0; i < KNOB_6; i++)
     {
         knobs[i]->SetSampleRate(AudioCallbackRate());
     }
@@ -120,9 +120,10 @@ void GuitarPedal::ProcessDigitalControls()
     }
 }
 
-float GuitarPedal::GetKnobValue(Knob idx)
+float GuitarPedal::GetKnobValue(Knob k)
 {
-    idx = idx < KNOB_COUNT ? idx : KNOB_1;
+    size_t idx;
+    idx = k < KNOB_6 ? k : KNOB_1;
     return knobs[idx]->Value();
 }
 
@@ -185,27 +186,17 @@ void GuitarPedal::InitLeds()
 {
     leds[LED_L] = &ledLeft;
     leds[LED_R] = &ledRight;
-    
-    // Initialize LEDS, sample rate defaults to 1000 Hz
+
     leds[LED_L]->Init(LED_L_PIN, false);
     leds[LED_R]->Init(LED_R_PIN, false);
 
     for (size_t i = 0; i < LED_COUNT; i++)
     {
+        // leds[i]->SetSampleRate(AudioCallbackRate());
         leds[i]->Set(0.0f);
-        leds[i]->Update();
     }
 }
 
 void GuitarPedal::SetLed(LED idx, float bright) {
     leds[idx]->Set(bright);
-}
-
-/** Update Leds.*/
-void GuitarPedal::UpdateLeds()
-{
-    for (size_t i = 0; i < LED_COUNT; i++)
-    {
-        leds[i]->Update();
-    }
 }
