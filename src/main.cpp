@@ -1,19 +1,19 @@
-#include "Synthesis/oscillator.h"
 #include "guitar_pedal.h"
-#include "daisysp.h"
 #include <cstdio>
 
-using namespace daisy;
-using namespace daisysp;
+// Effects Includes
+#include "effects/tremolo/tremolo_effect.h"
 
-// Pedal hardware
-static daisy::GuitarPedal pedal;
-
-// Effects
-Tremolo tremolo;
+namespace
+{
+// Hardware and Effects variables
+static GuitarPedal pedal;
+static TremoloEffect tremolo;
+}
 
 // Global variables
 bool bypass;
+
 
 static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
@@ -27,10 +27,6 @@ static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer
         pedal.leds[GuitarPedal::LED_L]->Set(bypass ? 1.0f : 0.0f);
     }
 
-    // TREMOLO
-    tremolo.SetFreq(pedal.GetKnobValue(daisy::GuitarPedal::KNOB_1));
-    tremolo.SetDepth(pedal.GetKnobValue(daisy::GuitarPedal::KNOB_2));
-
     if (!bypass)
     {
         for (size_t i = 0; i < size; i++)
@@ -42,7 +38,8 @@ static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer
     {
         for (size_t i = 0; i < size; i++)
         {
-            out[0][i] = tremolo.Process(in[0][i]);
+            out[0][i] = tremolo.Process((10.0f * pedal.GetKnobValue(GuitarPedal::KNOB_3))
+                    ,pedal.GetKnobValue(GuitarPedal::KNOB_6), in[0][i]);
         }
     }
 
@@ -60,11 +57,7 @@ int main(void)
     bypass = true;
     
     // Effects setup
-    tremolo.Init(SAMPLE_RATE);
-    tremolo.SetWaveform(Oscillator::WAVE_SIN);
-    tremolo.SetFreq(pedal.GetKnobValue(daisy::GuitarPedal::KNOB_1));
-    tremolo.SetDepth(pedal.GetKnobValue(daisy::GuitarPedal::KNOB_2));
-    
+    tremolo.Init(pedal.GetKnobValue(GuitarPedal::KNOB_3), pedal.GetKnobValue(GuitarPedal::KNOB_6),SAMPLE_RATE); 
 
     // Enable logging, and set up USB connection
     pedal.seed.StartLog();
@@ -72,6 +65,6 @@ int main(void)
 
     while(1)
     {
-        pedal.seed.PrintLine("Bypass: %d", bypass);
+        pedal.seed.PrintLine("Freq: %d, Depth: %d", static_cast<int>(pedal.GetKnobValue(GuitarPedal::KNOB_3)), static_cast<int>(pedal.GetKnobValue(GuitarPedal::KNOB_6)));
     }
 }

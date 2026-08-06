@@ -1,13 +1,10 @@
 #pragma once
-
 #ifndef SAMPLE_RATE
 #define SAMPLE_RATE 48014.f
 #endif
 
 #include "daisy_seed.h"
 
-namespace daisy
-{
 class GuitarPedal
 {
     public:
@@ -60,13 +57,13 @@ class GuitarPedal
         /** Starts the callback
         \param cb multichannel callback function
         */
-        void StartAudio(AudioHandle::AudioCallback cb);
+        void StartAudio(daisy::AudioHandle::AudioCallback cb);
 
         /**
            Switch callback functions
            \param cb New multichannel callback function.
         */
-        void ChangeAudioCallback(AudioHandle::AudioCallback cb);
+        void ChangeAudioCallback(daisy::AudioHandle::AudioCallback cb);
 
         /** Stops the audio if it is running. */
         void StopAudio();
@@ -74,7 +71,7 @@ class GuitarPedal
         /** Updates the Audio Sample Rate, and reinitializes.
          ** Audio must be stopped for this to work.
          */
-        void SetAudioSampleRate(SaiHandle::Config::SampleRate samplerate);
+        void SetAudioSampleRate(daisy::SaiHandle::Config::SampleRate samplerate);
 
         /** Returns the audio sample rate in Hz as a floating point number.
          */
@@ -119,11 +116,11 @@ class GuitarPedal
         /** Update Leds.*/
         void UpdateLeds();
 
-        DaisySeed     seed;    /**< & */
-        Encoder       encoder; /**< & */
-        AnalogControl knob1, knob2, knob3, knob4, knob5, knob6, *knobs[KNOB_COUNT]; /**< & */
-        Switch        switch1, switch2, switch3, switch4, switch5, switch6, *switches[SW_COUNT]; /**< & */
-        Led           ledLeft, ledRight, *leds[2]; /**< & */
+        daisy::DaisySeed     seed;    /**< & */
+        daisy::Encoder       encoder; /**< & */
+        daisy::AnalogControl knob1, knob2, knob3, knob4, knob5, knob6, *knobs[KNOB_COUNT]; /**< & */
+        daisy::Switch        switch1, switch2, switch3, switch4, switch5, switch6, *switches[SW_COUNT]; /**< & */
+        daisy::Led           ledLeft, ledRight, *leds[2]; /**< & */
 
       private:
         void SetHidUpdateRates();
@@ -134,4 +131,4 @@ class GuitarPedal
         inline uint16_t* adc_ptr(const uint8_t chn) { return seed.adc.GetPtr(chn); }
 
 };
-}
+

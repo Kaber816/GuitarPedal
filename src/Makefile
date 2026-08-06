@@ -4,7 +4,7 @@ TARGET = GuitarPedal
 # Sources: main.cpp plus everything in hardware/, effect/, utils/
 CPP_SOURCES = main.cpp \
               $(wildcard hardware/*.cpp) \
-              $(wildcard effect/*.cpp) \
+              $(wildcard effects/*.cpp) \
               $(wildcard utils/*.cpp)
 
 # Library Locations (relative to this Makefile, which lives in src/)
@@ -12,7 +12,7 @@ LIBDAISY_DIR = ../libDaisy
 DAISYSP_DIR  = ../DaisySP
 
 # Extra include paths:
-C_INCLUDES += -I. -Ihardware -Ieffect -Iutils -I../Terrarium
+C_INCLUDES += -I. -Ihardware -Ieffects -Iutils
 
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
