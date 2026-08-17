@@ -4,8 +4,8 @@ TARGET = GuitarPedal
 # Sources: main.cpp plus everything in hardware/, effect/, utils/
 CPP_SOURCES = main.cpp \
               $(wildcard hardware/*.cpp) \
-              $(wildcard effects/*.cpp) \
-              $(wildcard utils/*.cpp)
+              $(shell find effects -name '*.cpp') \
+              $(shell find utils -name '*.cpp')
 
 # Library Locations (relative to this Makefile, which lives in src/)
 LIBDAISY_DIR = ../libDaisy

@@ -3,44 +3,86 @@
 
 // Effects Includes
 #include "effects/tremolo/tremolo_effect.h"
+#include "ui/UI.h"
+#include "utils/looper/looper_util.h"
 
-namespace
-{
 // Hardware and Effects variables
-static GuitarPedal pedal;
+static GuitarPedal   pedal;
 static TremoloEffect tremolo;
-}
+static LooperUtil    looper;
 
-// Global variables
-bool bypass;
+// Other global variables
+bool leftEffect;
 
+enum class LooperState { EMPTY, RECORDING, PLAYING };
+static LooperState looperState;
 
 static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
     pedal.ProcessAnalogControls();
     pedal.ProcessDigitalControls();
-    
-    // Switch state updates
-    if (pedal.switches[GuitarPedal::SW_5]->RisingEdge())
+
+    // Switch state updates, do left first then right so effects stack into looper
+    if (pedal.switches[GuitarPedal::SW_5]->FallingEdge())
     {
-        bypass = !bypass;
-        pedal.leds[GuitarPedal::LED_L]->Set(bypass ? 1.0f : 0.0f);
+        leftEffect = !leftEffect;
+        pedal.leds[GuitarPedal::LED_L]->Set(leftEffect ? 1.0f : 0.0f);
     }
 
-    if (!bypass)
+    if (pedal.switches[GuitarPedal::SW_6]->FallingEdge())
     {
-        for (size_t i = 0; i < size; i++)
+        if (pedal.switches[GuitarPedal::SW_6]->TimeHeldMs() > 1000.0f)
         {
-            out[0][i] = in[0][i];
+            if (looper.IsRecording())
+            {
+                looper.TrigRecord();
+            }
+
+            looper.ClearBuffer();
+            looperState = LooperState::EMPTY;
+            pedal.leds[GuitarPedal::LED_R]->Set(0.0f);
+        }
+        else
+        {
+            switch (looperState)
+            {
+                case LooperState::EMPTY:
+                    looper.TrigRecord();
+                    looperState = LooperState::RECORDING;
+                    break;
+
+                case LooperState::RECORDING:
+                    looper.TrigRecord();
+                    looperState = LooperState::PLAYING;
+                    break;
+
+                case LooperState::PLAYING:
+                    looper.TrigRecord();
+                    looperState = LooperState::RECORDING;
+                    break;
+            }
+
+            pedal.leds[GuitarPedal::LED_R]->Set(looperState == LooperState::EMPTY ? 0.0f : 1.0f);
         }
     }
-    else
+
+    float freq  = 10.0f * pedal.GetKnobValue(GuitarPedal::KNOB_3);
+    float depth = pedal.GetKnobValue(GuitarPedal::KNOB_6);
+
+    for (size_t i = 0; i < size; i++)
     {
-        for (size_t i = 0; i < size; i++)
+        float sample = in[0][i];
+
+        if (leftEffect)
+            sample = tremolo.Process(freq, depth, sample);
+
+        if (looperState != LooperState::EMPTY)
         {
-            out[0][i] = tremolo.Process((10.0f * pedal.GetKnobValue(GuitarPedal::KNOB_3))
-                    ,pedal.GetKnobValue(GuitarPedal::KNOB_6), in[0][i]);
+            float looped = looper.Process(sample);
+            sample = (looperState == LooperState::RECORDING) ? (sample + looped) : looped;
         }
+
+        out[0][i] = sample;
     }
 
     pedal.UpdateLeds();
@@ -54,14 +96,17 @@ int main(void)
     pedal.StartAudio(AudioCallback);
 
     // Pedal state setup
-    bypass = true;
-    
+    leftEffect  = false;
+    looperState = LooperState::EMPTY;
+    pedal.leds[GuitarPedal::LED_L]->Set(0.0f);
+    pedal.leds[GuitarPedal::LED_R]->Set(0.0f);
+
     // Effects setup
-    tremolo.Init(pedal.GetKnobValue(GuitarPedal::KNOB_3), pedal.GetKnobValue(GuitarPedal::KNOB_6),SAMPLE_RATE); 
+    tremolo.Init(pedal.GetKnobValue(GuitarPedal::KNOB_3), pedal.GetKnobValue(GuitarPedal::KNOB_6), SAMPLE_RATE);
+    looper.Init();
 
     // Enable logging, and set up USB connection
     pedal.seed.StartLog();
-
 
     while(1)
     {
