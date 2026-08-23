@@ -22,12 +22,12 @@ float LooperUtil::Process(float in)
     return  looper.Process(in);
 }
 
-bool LooperUtil::IsRecording()
+bool LooperUtil::Recording()
 {
     return looper.Recording();
 }
 
-void LooperUtil::ClearBuffer()
+void LooperUtil::Clear()
 {
     looper.Clear();
 }

@@ -1,68 +1,56 @@
+#include "Utility/looper.h"
 #include "guitar_pedal.h"
 #include <cstdio>
 
 // Effects Includes
 #include "effects/tremolo/tremolo_effect.h"
-#include "ui/UI.h"
+#include "daisysp.h"
 #include "utils/looper/looper_util.h"
 
 // Hardware and Effects variables
 static GuitarPedal   pedal;
 static TremoloEffect tremolo;
-static LooperUtil    looper;
+static LooperUtil looper;
 
 // Other global variables
 bool leftEffect;
-
-enum class LooperState { EMPTY, RECORDING, PLAYING };
-static LooperState looperState;
+bool rightLed;
+bool loopClearHasToggled;
 
 static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
     pedal.ProcessAnalogControls();
     pedal.ProcessDigitalControls();
 
-    // Switch state updates, do left first then right so effects stack into looper
-    if (pedal.switches[GuitarPedal::SW_5]->FallingEdge())
+    // Left effect/LED handling
+    if (pedal.switches[GuitarPedal::SW_5]->RisingEdge())
     {
         leftEffect = !leftEffect;
         pedal.leds[GuitarPedal::LED_L]->Set(leftEffect ? 1.0f : 0.0f);
     }
-
-    if (pedal.switches[GuitarPedal::SW_6]->FallingEdge())
+    
+    // Clear Looper Handling
+    if (pedal.switches[GuitarPedal::SW_6]->Pressed())
     {
-        if (pedal.switches[GuitarPedal::SW_6]->TimeHeldMs() > 1000.0f)
+        if (pedal.switches[GuitarPedal::SW_6]->TimeHeldMs() > 1000.0f && !loopClearHasToggled) 
         {
-            if (looper.IsRecording())
-            {
-                looper.TrigRecord();
-            }
-
-            looper.ClearBuffer();
-            looperState = LooperState::EMPTY;
+            rightLed = !rightLed;
             pedal.leds[GuitarPedal::LED_R]->Set(0.0f);
+            loopClearHasToggled = true;
+            looper.Clear();
         }
-        else
+    }
+    else
+    {
+        loopClearHasToggled = false;
+    }
+
+    if (pedal.switches[GuitarPedal::SW_6]->RisingEdge() && !loopClearHasToggled)
+    {
+        looper.TrigRecord();
+        if (looper.Recording())
         {
-            switch (looperState)
-            {
-                case LooperState::EMPTY:
-                    looper.TrigRecord();
-                    looperState = LooperState::RECORDING;
-                    break;
-
-                case LooperState::RECORDING:
-                    looper.TrigRecord();
-                    looperState = LooperState::PLAYING;
-                    break;
-
-                case LooperState::PLAYING:
-                    looper.TrigRecord();
-                    looperState = LooperState::RECORDING;
-                    break;
-            }
-
-            pedal.leds[GuitarPedal::LED_R]->Set(looperState == LooperState::EMPTY ? 0.0f : 1.0f);
+            pedal.leds[GuitarPedal::LED_R]->Set(1.0f);
         }
     }
 
@@ -74,13 +62,12 @@ static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer
         float sample = in[0][i];
 
         if (leftEffect)
-            sample = tremolo.Process(freq, depth, sample);
-
-        if (looperState != LooperState::EMPTY)
         {
-            float looped = looper.Process(sample);
-            sample = (looperState == LooperState::RECORDING) ? (sample + looped) : looped;
+            sample = tremolo.Process(freq, depth, sample);
         }
+
+        float looped = looper.Process(sample);
+        sample += looped;
 
         out[0][i] = sample;
     }
@@ -97,7 +84,8 @@ int main(void)
 
     // Pedal state setup
     leftEffect  = false;
-    looperState = LooperState::EMPTY;
+    rightLed = false;
+    loopClearHasToggled = false;
     pedal.leds[GuitarPedal::LED_L]->Set(0.0f);
     pedal.leds[GuitarPedal::LED_R]->Set(0.0f);
 

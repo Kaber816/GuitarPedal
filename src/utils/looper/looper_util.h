@@ -8,8 +8,8 @@ class LooperUtil
     ~LooperUtil(){}   
     void Init();
     float Process(float in);
-    bool IsRecording();
-    void ClearBuffer();
+    bool Recording();
+    void Clear();
     void TrigRecord();
 
 
