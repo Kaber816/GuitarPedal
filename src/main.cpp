@@ -1,3 +1,4 @@
+#include "Effects/sampleratereducer.h"
 #include "Utility/looper.h"
 #include "guitar_pedal.h"
 #include <cstdio>
@@ -11,9 +12,10 @@
 static GuitarPedal   pedal;
 static TremoloEffect tremolo;
 static LooperUtil looper;
+static daisysp::SampleRateReducer sampleRateReducer;
 
 // Other global variables
-bool leftEffect;
+bool effectsEnabled;
 bool rightLed;
 bool loopClearHasToggled;
 
@@ -25,8 +27,8 @@ static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer
     // Left effect/LED handling
     if (pedal.switches[GuitarPedal::SW_5]->RisingEdge())
     {
-        leftEffect = !leftEffect;
-        pedal.leds[GuitarPedal::LED_L]->Set(leftEffect ? 1.0f : 0.0f);
+        effectsEnabled = !effectsEnabled;
+        pedal.leds[GuitarPedal::LED_L]->Set(effectsEnabled ? 1.0f : 0.0f);
     }
     
     // Clear Looper Handling
@@ -54,20 +56,35 @@ static void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer
         }
     }
 
-    float freq  = 10.0f * pedal.GetKnobValue(GuitarPedal::KNOB_3);
-    float depth = pedal.GetKnobValue(GuitarPedal::KNOB_6);
+    // Effect settings with knobs
+    float tremoloFreq  = 10.0f * pedal.GetKnobValue(GuitarPedal::KNOB_3);
+    float tremoloDepth = pedal.GetKnobValue(GuitarPedal::KNOB_6);
+    sampleRateReducer.SetFreq(0.1 * pedal.GetKnobValue(GuitarPedal::KNOB_5));
 
     for (size_t i = 0; i < size; i++)
     {
+        // Original input sample, stack effects together to get final output
         float sample = in[0][i];
 
-        if (leftEffect)
+        // Effects processing
+        if (effectsEnabled)
         {
-            sample = tremolo.Process(freq, depth, sample);
+            // Sample Rate Reducer
+            if (pedal.switches[GuitarPedal::SW_3]->Pressed())
+            {
+                sample = sampleRateReducer.Process(sample);
+            }
+
+            // Tremolo
+            if (pedal.switches[GuitarPedal::SW_4]->Pressed())
+            {
+                sample = tremolo.Process(tremoloFreq, tremoloDepth, sample);
+            }
+
         }
 
         float looped = looper.Process(sample);
-        sample += looped;
+        sample += looped; // Add the loop ontop so it replays with current signal
 
         out[0][i] = sample;
     }
@@ -83,21 +100,24 @@ int main(void)
     pedal.StartAudio(AudioCallback);
 
     // Pedal state setup
-    leftEffect  = false;
+    effectsEnabled  = false;
     rightLed = false;
-    loopClearHasToggled = false;
     pedal.leds[GuitarPedal::LED_L]->Set(0.0f);
     pedal.leds[GuitarPedal::LED_R]->Set(0.0f);
 
     // Effects setup
     tremolo.Init(pedal.GetKnobValue(GuitarPedal::KNOB_3), pedal.GetKnobValue(GuitarPedal::KNOB_6), SAMPLE_RATE);
+
     looper.Init();
+    loopClearHasToggled = false;
+
+    sampleRateReducer.Init();
+    sampleRateReducer.SetFreq(pedal.GetKnobValue(GuitarPedal::KNOB_5));
 
     // Enable logging, and set up USB connection
     pedal.seed.StartLog();
 
     while(1)
     {
-        pedal.seed.PrintLine("Freq: %d, Depth: %d", static_cast<int>(pedal.GetKnobValue(GuitarPedal::KNOB_3)), static_cast<int>(pedal.GetKnobValue(GuitarPedal::KNOB_6)));
     }
 }

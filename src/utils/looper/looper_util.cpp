@@ -36,3 +36,19 @@ void LooperUtil::TrigRecord()
 {
     looper.TrigRecord();
 }
+
+void LooperUtil::ChangeMode()
+{
+    switch (looper.GetMode())
+    {
+        case daisysp::Looper::Mode::NORMAL:
+            looper.SetMode(daisysp::Looper::Mode::FRIPPERTRONICS);
+            break;
+        case daisysp::Looper::Mode::FRIPPERTRONICS:
+            looper.SetMode(daisysp::Looper::Mode::NORMAL);
+            break;
+        default:
+            looper.SetMode(daisysp::Looper::Mode::NORMAL);
+            break;
+    }
+}

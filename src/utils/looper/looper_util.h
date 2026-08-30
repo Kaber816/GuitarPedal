@@ -11,6 +11,7 @@ class LooperUtil
     bool Recording();
     void Clear();
     void TrigRecord();
+    void ChangeMode();
 
 
     private:
